@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="adrobj" class="com.wipro.DIDemo.Address">
+        <property name="city" value="jalandhar" />   <!-- setter injection -->
+    </bean>
+
+    <bean id="stuobj" class="com.wipro.DIDemo.Student">
+        <constructor-arg value="12" />		<!-- Constructor injection -->
+        <constructor-arg value="Sakshi" />
+        <constructor-arg ref="adrobj" />
+    </bean>
+
+</beans>
