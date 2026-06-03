@@ -1,0 +1,5 @@
+package com.musiclibrary.auth.dto;
+
+public class RegisterRequest {
+
+}

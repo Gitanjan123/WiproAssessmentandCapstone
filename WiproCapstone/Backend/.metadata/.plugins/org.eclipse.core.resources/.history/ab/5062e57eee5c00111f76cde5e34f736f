@@ -1,0 +1,5 @@
+package com.musiclibrary.notification.dto;
+
+public class NotificationRequest {
+
+}

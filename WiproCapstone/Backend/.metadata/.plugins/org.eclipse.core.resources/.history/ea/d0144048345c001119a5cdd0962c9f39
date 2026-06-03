@@ -1,0 +1,5 @@
+package com.musiclibrary.song.entity;
+
+public class Song {
+
+}

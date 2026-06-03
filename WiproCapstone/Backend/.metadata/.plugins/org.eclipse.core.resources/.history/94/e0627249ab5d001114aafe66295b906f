@@ -1,0 +1,12 @@
+package com.musiclibrary.playlist.repository;
+
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.musiclibrary.playlist.entity.Playlist;
+
+public interface PlaylistRepository
+        extends JpaRepository<Playlist, Long> {
+
+    List<Playlist> findByUserId(Long userId);
+
+}  // ← THIS WAS MISSING

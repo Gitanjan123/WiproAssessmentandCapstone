@@ -1,0 +1,97 @@
+package com.musiclibrary.notification.service;
+
+import com.musiclibrary.notification.dto.*;
+import com.musiclibrary.notification.entity.Notification;
+import com.musiclibrary.notification.repository
+        .NotificationRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class NotificationService {
+
+    private final NotificationRepository repo;
+    private final JavaMailSender mailSender;
+
+    // ── 1. Send notification ──────────────────────────────────
+    public NotificationResponse send(
+            NotificationRequest request) {
+
+        String status = "SUCCESS";
+
+        // Try to send email
+        try {
+            SimpleMailMessage mail =
+                new SimpleMailMessage();
+            mail.setTo(request.getRecipientEmail());
+            mail.setSubject(request.getSubject());
+            mail.setText(request.getMessage());
+            mailSender.send(mail);
+            log.info("Email sent to: {}",
+                request.getRecipientEmail());
+        } catch (Exception e) {
+            // if email fails, still save the record
+            status = "FAILED";
+            log.error("Email failed: {}", e.getMessage());
+        }
+
+        // Save to database
+        Notification saved = repo.save(
+            Notification.builder()
+                .subject(request.getSubject())
+                .message(request.getMessage())
+                .type(request.getType())
+                .sentTo(request.getRecipientEmail())
+                .build()
+        );
+
+        return mapToResponse(saved, status);
+    }
+
+    // ── 2. Get all notifications ──────────────────────────────
+    public List<NotificationResponse> getAll() {
+        return repo.findAllOrderBySentAtDesc()
+                .stream()
+                .map(n -> mapToResponse(n, "SUCCESS"))
+                .collect(Collectors.toList());
+    }
+
+    // ── 3. Get by ID ──────────────────────────────────────────
+    public NotificationResponse getById(Long id) {
+        Notification n = repo.findById(id)
+                .orElseThrow(() ->
+                    new RuntimeException(
+                        "Notification not found: " + id));
+        return mapToResponse(n, "SUCCESS");
+    }
+
+    // ── 4. Delete notification ────────────────────────────────
+    public void delete(Long id) {
+        if (!repo.existsById(id)) {
+            throw new RuntimeException(
+                "Notification not found: " + id);
+        }
+        repo.deleteById(id);
+    }
+
+    // ── Helper: map entity to response ───────────────────────
+    private NotificationResponse mapToResponse(
+            Notification n, String status) {
+        return NotificationResponse.builder()
+                .id(n.getId())
+                .subject(n.getSubject())
+                .message(n.getMessage())
+                .type(n.getType())
+                .sentTo(n.getSentTo())
+                .sentAt(n.getSentAt())
+                .status(status)
+                .build();
+    }
+}

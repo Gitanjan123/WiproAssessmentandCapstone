@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Library — Manage Songs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    .spinner {
+      width: 24px; height: 24px;
+      border: 2px solid #3f3f46;
+      border-top-color: #f59e0b;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toggle Switch */
+    .toggle-wrap { position: relative; display: inline-block; width: 40px; height: 22px; cursor: pointer; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: #3f3f46; border-radius: 999px;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 16px; height: 16px;
+      left: 3px; top: 3px;
+      background: white; border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-wrap input:checked + .toggle-slider { background: #f59e0b; }
+    .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(18px); }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white">
+<div class="flex min-h-screen">
+
+  <!-- ── Sidebar ── -->
+  <aside class="fixed top-0 left-0 z-40 w-60 h-screen
+                flex flex-col bg-zinc-900
+                border-r border-zinc-800 px-4 py-6">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-3 pb-6 mb-6
+                border-b border-zinc-800">
+      <div class="w-9 h-9 rounded-xl flex items-center
+                  justify-center text-lg font-bold
+                  text-white flex-shrink-0"
+           style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+        ⚙
+      </div>
+      <span class="font-display text-lg"
+            style="color:#a78bfa">Admin Panel</span>
+    </div>
+
+    <p class="text-[10px] uppercase tracking-widest
+              text-zinc-500 px-2 mb-2">Admin Panel</p>
+
+    <a href="dashboard.html"
+       class="flex items-center gap-3 px-3 py-2.5
+              rounded-xl mb-1 text-sm font-medium
+              text-zinc-400 hover:text-white
+              hover:bg-zinc-800 transition-all">
+      <span class="w-5 text-center">📊</span>
+      Dashboard
+    </a>
+
+    <a href="songs.html"
+       class="flex items-center gap-3 px-3 py-2.5
+              rounded-xl mb-1 text-sm font-medium
+              bg-violet-400/10 text-violet-400
+              border border-violet-400/20">
+      <span class="w-5 text-center">🎵</span>
+      Manage Songs
+    </a>
+
+    <a href="notifications.html"
+       class="flex items-center gap-3 px-3 py-2.5
+              rounded-xl mb-1 text-sm font-medium
+              text-zinc-400 hover:text-white
+              hover:bg-zinc-800 transition-all">
+      <span class="w-5 text-center">🔔</span>
+      Notifications
+    </a>
+
+    <!-- Footer -->
+    <div class="mt-auto pt-4 border-t border-zinc-800">
+      <div class="flex items-center gap-3 px-3 py-2.5
+                  bg-zinc-800 rounded-xl mb-3">
+        <div id="sidebarAvatar"
+             class="w-8 h-8 rounded-full flex items-center
+                    justify-center text-xs font-bold
+                    text-white flex-shrink-0"
+             style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+          A
+        </div>
+        <div class="min-w-0">
+          <p id="sidebarUserName"
+             class="text-sm font-medium text-white truncate">
+            Admin
+          </p>
+          <p id="sidebarUserRole"
+             class="text-[10px] uppercase tracking-wider
+                    text-zinc-500">Admin</p>
+        </div>
+      </div>
+      <button onclick="handleLogout()"
+        class="w-full flex items-center gap-3 px-3 py-2.5
+               rounded-xl text-red-400 hover:text-red-300
+               hover:bg-red-400/10 transition-all
+               text-sm font-medium">
+        <span class="w-5 text-center">↩</span>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <main class="ml-60 flex-1 p-8">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between
+                flex-wrap gap-4 mb-8">
+      <div>
+        <h1 class="font-display text-3xl text-white mb-1">
+          Manage Songs
+        </h1>
+        <a href="users.html"
+   class="flex items-center gap-3 px-3 py-2.5
+          rounded-xl mb-1 text-sm font-medium
+          text-zinc-400 hover:text-white
+          hover:bg-zinc-800 transition-all">
+  <span class="w-5 text-center">👥</span>
+  Manage Users
+</a>
+        <p class="text-zinc-400 text-sm"
+           id="adminSongCount">Loading…</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Search -->
+        <div class="flex items-center gap-2
+                    bg-zinc-800 border border-zinc-700
+                    rounded-xl px-4 py-2.5">
+          <span class="text-zinc-500">🔍</span>
+          <input type="text" id="adminSongSearch"
+            placeholder="Search songs…"
+            oninput="searchAdminSongs()"
+            class="bg-transparent border-none outline-none
+                   text-white text-sm placeholder-zinc-500
+                   w-44 font-sans"/>
+        </div>
+        <!-- Add Button -->
+        <button onclick="openAddSongModal()"
+          class="flex items-center gap-2 px-5 py-2.5
+                 rounded-xl text-sm font-semibold
+                 text-yellow-900 transition-all
+                 hover:opacity-90"
+          style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+          + Add Song
+        </button>
+      </div>
+    </div>
+
+    <!-- Songs Table -->
+    <div class="bg-zinc-900 border border-zinc-800
+                rounded-2xl overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-zinc-800">
+            <th class="text-left px-5 py-3.5 text-xs
+                       uppercase tracking-wider
+                       text-zinc-500 font-medium">
+              Song
+            </th>
+            <th class="text-left px-5 py-3.5 text-xs
+                       uppercase tracking-wider
+                       text-zinc-500 font-medium">
+              Artist
+            </th>
+            <th class="text-left px-5 py-3.5 text-xs
+                       uppercase tracking-wider
+                       text-zinc-500 font-medium">
+              Music Director
+            </th>
+            <th class="text-left px-5 py-3.5 text-xs
+                       uppercase tracking-wider
+                       text-zinc-500 font-medium">
+              Album
+            </th>
+            <th class="text-left px-5 py-3.5 text-xs
+                       uppercase tracking-wider
+                       text-zinc-500 font-medium">
+              Release Date
+            </th>
+            <th class="text-left px-5 py-3.5 text-xs
+                       uppercase tracking-wider
+                       text-zinc-500 font-medium">
+              Visible
+            </th>
+            <th class="text-left px-5 py-3.5 text-xs
+                       uppercase tracking-wider
+                       text-zinc-500 font-medium">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody id="adminSongsBody">
+          <tr>
+            <td colspan="7"
+                class="text-center py-16">
+              <div class="spinner"
+                   style="width:32px;height:32px;
+                          margin:auto"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── Add Song Modal ── -->
+<div id="addSongModal"
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm
+            z-50 hidden items-center justify-center"
+     onclick="closeAddSongModal()">
+  <div class="bg-zinc-900 border border-zinc-700
+              rounded-2xl p-7 w-full max-w-lg mx-4
+              max-h-screen overflow-y-auto"
+       onclick="event.stopPropagation()">
+    <h2 class="font-display text-2xl text-white mb-5">
+      Add New Song
+    </h2>
+    <div id="addSongAlert"
+         class="hidden mb-4 p-3 rounded-xl text-sm"></div>
+    <form id="addSongForm" onsubmit="return false">
+      <div class="grid grid-cols-2 gap-4">
+
+        <!-- Title - full width -->
+        <div class="col-span-2">
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Song Title *
+          </label>
+          <input id="songTitle" type="text"
+            placeholder="e.g. Tum Hi Ho"
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none placeholder-zinc-500
+                   focus:border-amber-500 transition-colors
+                   font-sans"/>
+        </div>
+
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Artist / Singer *
+          </label>
+          <input id="songArtist" type="text"
+            placeholder="Arijit Singh"
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none placeholder-zinc-500
+                   focus:border-amber-500 transition-colors
+                   font-sans"/>
+        </div>
+
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Music Director
+          </label>
+          <input id="songMusicDirector" type="text"
+            placeholder="Mithoon"
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none placeholder-zinc-500
+                   focus:border-amber-500 transition-colors
+                   font-sans"/>
+        </div>
+
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Album
+          </label>
+          <input id="songAlbum" type="text"
+            placeholder="Aashiqui 2"
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none placeholder-zinc-500
+                   focus:border-amber-500 transition-colors
+                   font-sans"/>
+        </div>
+
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Release Date
+          </label>
+          <input id="songReleaseDate" type="date"
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none
+                   focus:border-amber-500 transition-colors
+                   font-sans"/>
+        </div>
+
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Genre
+          </label>
+          <select id="songGenre"
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none
+                   focus:border-amber-500 transition-colors
+                   font-sans">
+            <option value="">Select Genre</option>
+            <option>Bollywood</option>
+            <option>Pop</option>
+            <option>Rock</option>
+            <option>Classical</option>
+            <option>Jazz</option>
+            <option>Hip Hop</option>
+            <option>EDM</option>
+            <option>Folk</option>
+            <option>Devotional</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Duration (seconds)
+          </label>
+          <input id="songDuration" type="number"
+            min="1" placeholder="245"
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none placeholder-zinc-500
+                   focus:border-amber-500 transition-colors
+                   font-sans"/>
+        </div>
+
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2
+                        uppercase tracking-widest">
+            Album Art URL
+          </label>
+          <input id="songAlbumArt" type="text"
+            placeholder="https://..."
+            class="w-full bg-zinc-800 border border-zinc-700
+                   rounded-xl px-4 py-3 text-white text-sm
+                   outline-none placeholder-zinc-500
+                   focus:border-amber-500 transition-colors
+                   font-sans"/>
+        </div>
+
+      </div>
+
+      <div class="flex gap-3 justify-end mt-6">
+        <button type="button"
+          onclick="closeAddSongModal()"
+          class="px-5 py-2.5 rounded-xl text-sm
+                 font-medium text-zinc-300
+                 bg-zinc-800 border border-zinc-700
+                 hover:bg-zinc-700 transition-all font-sans">
+          Cancel
+        </button>
+        <button type="button"
+          onclick="handleAddSong()"
+          class="px-5 py-2.5 rounded-xl text-sm
+                 font-semibold text-yellow-900
+                 hover:opacity-90 transition-all font-sans"
+          style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+          Add Song
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Edit Song Modal ── -->
+<div id="editSongModal"
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm
+            z-50 hidden items-center justify-center"
+     onclick="closeEditSongModal()">
+  <div class="bg-zinc-900 border border-zinc-700
+              rounded-2xl p-7 w-full max-w-lg mx-4
+              max-h-screen overflow-y-auto"
+       onclick="event.stopPropagation()">
+    <h2 class="font-display text-2xl text-white mb-5">
+      Edit Song
+    </h2>
+    <div id="editSongAlert"
+         class="hidden mb-4 p-3 rounded-xl text-sm"></div>
+    <div class="grid grid-cols-2 gap-4">
+
+      <div class="col-span-2">
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Song Title
+        </label>
+        <input id="editSongTitle" type="text"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Artist
+        </label>
+        <input id="editSongArtist" type="text"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Music Director
+        </label>
+        <input id="editSongMusicDirector" type="text"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Album
+        </label>
+        <input id="editSongAlbum" type="text"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Release Date
+        </label>
+        <input id="editSongReleaseDate" type="date"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Genre
+        </label>
+        <select id="editSongGenre"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans">
+          <option value="">Select Genre</option>
+          <option>Bollywood</option>
+          <option>Pop</option>
+          <option>Rock</option>
+          <option>Classical</option>
+          <option>Jazz</option>
+          <option>Hip Hop</option>
+          <option>EDM</option>
+          <option>Folk</option>
+          <option>Devotional</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Duration (sec)
+        </label>
+        <input id="editSongDuration" type="number"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2
+                      uppercase tracking-widest">
+          Album Art URL
+        </label>
+        <input id="editSongAlbumArt" type="text"
+          class="w-full bg-zinc-800 border border-zinc-700
+                 rounded-xl px-4 py-3 text-white text-sm
+                 outline-none focus:border-amber-500
+                 transition-colors font-sans"/>
+      </div>
+
+    </div>
+    <div class="flex gap-3 justify-end mt-6">
+      <button onclick="closeEditSongModal()"
+        class="px-5 py-2.5 rounded-xl text-sm
+               font-medium text-zinc-300
+               bg-zinc-800 border border-zinc-700
+               hover:bg-zinc-700 transition-all font-sans">
+        Cancel
+      </button>
+      <button onclick="handleEditSong()"
+        class="px-5 py-2.5 rounded-xl text-sm
+               font-semibold text-yellow-900
+               hover:opacity-90 transition-all font-sans"
+        style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/api.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/songs.js"></script>
+<script src="../../js/admin.js"></script>
+<script>
+  requireAuth('ADMIN');
+  populateSidebarUser();
+  loadAdminSongs();
+
+  // Auto-fill search if coming from dashboard
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedQuery =
+      sessionStorage.getItem('adminSearchQuery');
+    if (savedQuery) {
+      const searchInput =
+        document.getElementById('adminSongSearch');
+      if (searchInput) {
+        searchInput.value = savedQuery;
+        searchAdminSongs();
+      }
+      sessionStorage.removeItem('adminSearchQuery');
+    }
+  });
+
+  // Override renderAdminSongs with Tailwind version
+  function renderAdminSongs(songs) {
+    const tbody = document.getElementById('adminSongsBody');
+    if (!tbody) return;
+
+    if (!songs.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7"
+              class="text-center py-16 text-zinc-500">
+            No songs found
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = songs.map(s => `
+      <tr class="border-b border-zinc-800/50
+                 hover:bg-zinc-800/40 transition-all">
+        <td class="px-5 py-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex-shrink-0
+                        overflow-hidden flex items-center
+                        justify-center text-xl bg-zinc-800">
+              ${s.albumArt
+                ? `<img src="${s.albumArt}"
+                        class="w-full h-full object-cover"
+                        onerror="this.parentElement.innerHTML='🎵'">`
+                : '🎵'
+              }
+            </div>
+            <div>
+              <div class="text-sm font-medium text-white">
+                ${escHtml(s.title || s.name)}
+              </div>
+              ${s.visible === false
+                ? `<span class="text-xs text-red-400">Hidden</span>`
+                : `<span class="text-xs text-green-400">Visible</span>`
+              }
+            </div>
+          </div>
+        </td>
+        <td class="px-5 py-4 text-sm text-zinc-300">
+          ${escHtml(s.artist || s.singer || '—')}
+        </td>
+        <td class="px-5 py-4 text-sm text-zinc-300">
+          ${escHtml(s.musicDirector || s.composer || '—')}
+        </td>
+        <td class="px-5 py-4 text-sm text-zinc-300">
+          ${escHtml(s.album || '—')}
+        </td>
+        <td class="px-5 py-4 text-sm text-zinc-400">
+          ${s.releaseDate
+            ? new Date(s.releaseDate)
+                .toLocaleDateString('en-IN')
+            : '—'}
+        </td>
+        <td class="px-5 py-4">
+          <label class="toggle-wrap">
+            <input type="checkbox"
+              ${s.visible !== false ? 'checked' : ''}
+              onchange="toggleVisibility(${s.id}, this)">
+            <span class="toggle-slider"></span>
+          </label>
+        </td>
+        <td class="px-5 py-4">
+          <div class="flex gap-2">
+            <button
+              onclick="openEditSongModal(${s.id})"
+              class="w-8 h-8 rounded-lg flex items-center
+                     justify-center text-sm transition-all
+                     bg-amber-400/10 text-amber-400
+                     border border-amber-400/20
+                     hover:bg-amber-400/20"
+              title="Edit">✏️</button>
+            <button
+              onclick="confirmDeleteSong(
+                ${s.id},'${escHtml(s.title || s.name)}')"
+              class="w-8 h-8 rounded-lg flex items-center
+                     justify-center text-sm transition-all
+                     bg-red-400/10 text-red-400
+                     border border-red-400/20
+                     hover:bg-red-400/20"
+              title="Delete">🗑</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  // Modal open/close helpers
+  function openAddSongModal() {
+    document.getElementById('addSongForm')?.reset();
+    document.getElementById('addSongAlert')
+      ?.classList.add('hidden');
+    const m = document.getElementById('addSongModal');
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+  }
+
+  function closeAddSongModal() {
+    const m = document.getElementById('addSongModal');
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+  }
+
+  function openEditSongModal(id) {
+    editSongId = id;
+    const song = adminSongs.find(s => s.id === id);
+    if (!song) return;
+    document.getElementById('editSongTitle').value =
+      song.title || song.name || '';
+    document.getElementById('editSongArtist').value =
+      song.artist || song.singer || '';
+    document.getElementById('editSongMusicDirector').value =
+      song.musicDirector || song.composer || '';
+    document.getElementById('editSongAlbum').value =
+      song.album || '';
+    document.getElementById('editSongReleaseDate').value =
+      song.releaseDate ? song.releaseDate.split('T')[0] : '';
+    document.getElementById('editSongGenre').value =
+      song.genre || '';
+    document.getElementById('editSongDuration').value =
+      song.duration || '';
+    document.getElementById('editSongAlbumArt').value =
+      song.albumArt || '';
+    document.getElementById('editSongAlert')
+      ?.classList.add('hidden');
+    const m = document.getElementById('editSongModal');
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+  }
+
+  function closeEditSongModal() {
+    const m = document.getElementById('editSongModal');
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+  }
+
+  function showAdminAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = `mb-4 p-3 rounded-xl text-sm ${
+      type === 'error'
+        ? 'bg-red-400/10 text-red-400 border border-red-400/20'
+        : 'bg-green-400/10 text-green-400 border border-green-400/20'
+    }`;
+    el.classList.remove('hidden');
+    if (type === 'success')
+      setTimeout(() => el.classList.add('hidden'), 4000);
+  }
+
+  function showToast(msg, type = 'success') {
+    const existing = document.getElementById('toastEl');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'toastEl';
+    toast.className = `fixed bottom-6 right-6 z-50
+      px-4 py-3 rounded-xl text-sm font-medium
+      border ${type === 'success'
+        ? 'bg-green-400/10 text-green-400 border-green-400/20'
+        : 'bg-red-400/10 text-red-400 border-red-400/20'}`;
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+</script>
+</body>
+</html>

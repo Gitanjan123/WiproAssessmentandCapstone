@@ -1,0 +1,16 @@
+package com.musiclibrary.playlist.entity;
+
+
+
+@Entity
+@Table(name="playlist_songs")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PlaylistSong {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
+	private Long playlistId;
+	private Long songId;
+}

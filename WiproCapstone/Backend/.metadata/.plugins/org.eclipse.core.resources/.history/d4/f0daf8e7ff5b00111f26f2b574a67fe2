@@ -1,0 +1,5 @@
+package com.musiclibrary.auth.repository;
+
+public class UserRepository {
+
+}

@@ -1,0 +1,7 @@
+package com.musiclibrary.playlist.repository;
+
+public interface PlaylistRepository extends JpaRepository<Playlist,Long>{
+	
+	List<Playlist>findByUserId(Long userId);
+
+}

@@ -1,0 +1,5 @@
+package com.musiclibrary.notification.entity;
+
+public class Notification {
+
+}

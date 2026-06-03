@@ -1,0 +1,51 @@
+package com.musiclibrary.notification.controller;
+
+import com.musiclibrary.notification.dto.*;
+import com.musiclibrary.notification.service
+        .NotificationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/notifications")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
+public class NotificationController {
+
+    private final NotificationService service;
+
+    // POST /notifications/send
+    @PostMapping("/send")
+    public ResponseEntity<NotificationResponse> send(
+            @RequestBody NotificationRequest request) {
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(service.send(request));
+    }
+
+    // GET /notifications
+    @GetMapping
+    public ResponseEntity<List<NotificationResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    // GET /notifications/1
+    @GetMapping("/{id}")
+    public ResponseEntity<NotificationResponse> getById(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
+
+    // DELETE /notifications/1
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> delete(
+            @PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.ok(
+            Map.of("message",
+                "Notification deleted"));
+    }
+}

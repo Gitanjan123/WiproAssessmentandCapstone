@@ -1,0 +1,5 @@
+package com.musiclibrary.auth.service;
+
+public class AuthService {
+
+}

@@ -1,0 +1,99 @@
+package com.musiclibrary.song.controller;
+
+import com.musiclibrary.song.dto.SongCreateRequest;
+import com.musiclibrary.song.service.SongService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+
+@RestController
+@CrossOrigin(origins = "*")
+public class SongController {
+
+    @Autowired
+    private SongService songService;
+
+    // Get all songs (users see only visible)
+    @GetMapping("/api/songs")
+    public ResponseEntity<?> getAllSongs() {
+        return ResponseEntity.ok(
+            songService.getAllSongs());
+    }
+
+    // Get all songs including hidden (admin)
+    @GetMapping("/api/admin/songs")
+    public ResponseEntity<?> getAllSongsAdmin() {
+        return ResponseEntity.ok(
+            songService.getAllSongsAdmin());
+    }
+
+    // Get song by ID
+    @GetMapping("/api/songs/{id}")
+    public ResponseEntity<?> getSongById(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(
+            songService.getSongById(id));
+    }
+
+    // Search songs
+    @GetMapping("/api/songs/search")
+    public ResponseEntity<?> searchSongs(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String artist,
+            @RequestParam(required = false) String album,
+            @RequestParam(required = false)
+                String musicDirector) {
+
+        if (q != null) {
+            return ResponseEntity.ok(
+                songService.searchSongs(q));
+        } else if (artist != null) {
+            return ResponseEntity.ok(
+                songService.searchByField("artist", artist));
+        } else if (album != null) {
+            return ResponseEntity.ok(
+                songService.searchByField("album", album));
+        } else if (musicDirector != null) {
+            return ResponseEntity.ok(
+                songService.searchByField(
+                    "musicDirector", musicDirector));
+        }
+        return ResponseEntity.ok(
+            songService.getAllSongs());
+    }
+
+    // Create song (admin)
+    @PostMapping("/api/admin/songs")
+    public ResponseEntity<?> createSong(
+            @RequestBody SongCreateRequest request) {
+        return ResponseEntity.ok(
+            songService.createSong(request));
+    }
+
+    // Update song (admin)
+    @PutMapping("/api/admin/songs/{id}")
+    public ResponseEntity<?> updateSong(
+            @PathVariable Long id,
+            @RequestBody SongCreateRequest request) {
+        return ResponseEntity.ok(
+            songService.updateSong(id, request));
+    }
+
+    // Delete song (admin)
+    @DeleteMapping("/api/admin/songs/{id}")
+    public ResponseEntity<?> deleteSong(
+            @PathVariable Long id) {
+        songService.deleteSong(id);
+        return ResponseEntity.ok(
+            Map.of("message", "Song deleted successfully"));
+    }
+
+    // Toggle visibility (admin)
+    @PutMapping("/api/admin/songs/{id}/visibility")
+    public ResponseEntity<?> toggleVisibility(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(
+            songService.toggleVisibility(id));
+    }
+}

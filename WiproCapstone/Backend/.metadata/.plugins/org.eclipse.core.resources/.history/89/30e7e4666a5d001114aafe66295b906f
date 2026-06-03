@@ -1,0 +1,21 @@
+package com.musiclibrary.admin.security;
+
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
+@Configuration
+public class SecurityConfig {
+	@Autowired
+	private JwtFilter jwtFilter;
+	
+	@Bean
+	public PasswordEncoder passwordEncoder()
+	{
+		return new BCryptPasswordEncoder();
+	}
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
+		http.csrf().disable().authorizeHttpRequests().anyRequest().hasRole("ADMIN").and().addFilterBefore(UsernamePasswordAuthenticationFilter.class);
+		
+		return http.build();
+	}
+}

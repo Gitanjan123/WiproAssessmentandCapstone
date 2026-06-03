@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Library — Playlist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/custom.css"/>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="../../assets/images/logo.png" class="sidebar-logo-img" alt="logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="logo-icon" style="display:none">♪</div>
+      <span>Music Library</span>
+    </div>
+    <div class="nav-section-title">Discover</div>
+    <a href="dashboard.html" class="nav-link">
+      <img src="../../assets/icons/home.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>🏠</span>'"/>
+      Song Library
+    </a>
+    <div class="nav-section-title">My Music</div>
+    <a href="playlists.html" class="nav-link active">
+      <img src="../../assets/icons/playlist.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>📋</span>'"/>
+      My Playlists
+    </a>
+    <a href="favorites.html" class="nav-link">
+      <img src="../../assets/icons/favorite.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>❤️</span>'"/>
+      Favorites
+    </a>
+    <a href="profile.html" class="nav-link">
+      <img src="../../assets/icons/profile.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>👤</span>'"/>
+      Profile
+    </a>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sidebarAvatar" style="position:relative;overflow:hidden">
+          <img src="../../assets/images/default-user.png" class="default-user-img" alt=""
+               onerror="this.style.display='none'"/>
+          <span id="sidebarAvatarText"
+            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">U</span>
+        </div>
+        <div>
+          <div class="user-name" id="sidebarUserName">—</div>
+          <div class="user-role" id="sidebarUserRole">User</div>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="nav-link w-full mt-2"
+        style="color:#f87171;border:none;background:none">
+        <span>↩</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content" style="padding-bottom:100px">
+    <div class="page-header">
+      <button onclick="window.location.href='playlists.html'" class="btn-secondary mb-4"
+        style="display:inline-flex;align-items:center;gap:6px;font-size:13px">
+        ← All Playlists
+      </button>
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="width:80px;height:80px;border-radius:16px;overflow:hidden;
+                    background:linear-gradient(135deg,#1e1430,#0e1a2e);flex-shrink:0;position:relative">
+          <img src="../../assets/icons/playlist.png" alt="playlist"
+               style="width:100%;height:100%;object-fit:cover"
+               onerror="this.style.display='none'"/>
+        </div>
+        <div>
+          <h1 class="page-title" id="playlistDetailName">Loading…</h1>
+          <p class="page-subtitle" id="playlistDetailCount">—</p>
+        </div>
+        <!-- ✅ Only one Play All button here -->
+        <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+          <button class="btn-primary" id="playAllBtn"
+            style="padding:10px 20px;border-radius:12px;font-size:14px;
+                   display:flex;align-items:center;gap:8px">
+            ▶ Play All
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <div class="search-bar" style="max-width:360px">
+        <img src="../../assets/icons/search.png"
+             style="width:16px;height:16px;filter:brightness(0) invert(1);opacity:0.5"
+             onerror="this.outerHTML='<span>🔍</span>'"/>
+        <input type="text" id="playlistSearchInput" placeholder="Search in this playlist…"
+          oninput="searchPlaylistSongs()"/>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div id="playlistSongsList" style="display:flex;flex-direction:column;gap:4px"></div>
+    </div>
+
+    <div style="margin-top:16px;text-align:center">
+      <p style="font-size:13px;color:var(--text-muted)">
+        Want to add more songs?
+        <a href="dashboard.html" style="color:var(--gold);margin-left:4px">Browse Library →</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<!-- ── Player Bar ── -->
+<div class="player-bar">
+  <div class="player-song-info">
+    <div class="player-thumb" id="playerThumb">
+      <img src="../../assets/icons/music.png" alt=""
+           style="width:100%;height:100%;object-fit:cover;border-radius:8px"
+           onerror="this.outerHTML='🎵'"/>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:500" id="playerSongName">—</div>
+      <div style="font-size:11px;color:var(--text-secondary)" id="playerSongArtist">—</div>
+    </div>
+  </div>
+  <div class="player-controls">
+    <div class="player-btns">
+      <button class="player-btn" id="playerShuffleBtnBar" title="Shuffle">
+        <img src="../../assets/icons/shuffle.png" alt="shuffle" onerror="this.outerHTML='⇄'"/>
+      </button>
+      <button class="player-btn" id="playerPrevBtn" title="Previous">
+        <img src="../../assets/icons/previous.png" alt="previous" onerror="this.outerHTML='⏮'"/>
+      </button>
+      <button class="player-btn play-btn" id="playerPlayBtnBar" title="Play/Pause">
+        <img src="../../assets/icons/play.png" alt="play" onerror="this.outerHTML='▶'"/>
+      </button>
+      <button class="player-btn" id="playerNextBtn" title="Next">
+        <img src="../../assets/icons/next.png" alt="next" onerror="this.outerHTML='⏭'"/>
+      </button>
+      <button class="player-btn" id="playerStopBtn" title="Stop">
+        <img src="../../assets/icons/pause.png" alt="stop" onerror="this.outerHTML='⏹'"/>
+      </button>
+      <button class="player-btn" id="playerRepeatBtnBar" title="Repeat">
+        <img src="../../assets/icons/repeat.png" alt="repeat" onerror="this.outerHTML='↻'"/>
+      </button>
+    </div>
+    <div class="progress-bar-wrap">
+      <span class="progress-time" id="progressCurrent">0:00</span>
+      <div class="progress-track" id="progressTrack">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="progress-time" id="progressTotal">0:00</span>
+    </div>
+  </div>
+  <div class="player-volume">
+    <span id="volumeIcon">🔊</span>
+    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80"/>
+  </div>
+</div>
+
+<script src="../../js/api.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/songs.js"></script>
+<script src="../../js/playlist.js"></script>
+<script src="../../js/player.js"></script>
+<script>
+  requireAuth('USER');
+  populateSidebarUser();
+  loadPlaylistDetail();
+
+  document.getElementById('playAllBtn')?.addEventListener('click', () => {
+    Player.loadQueue(playlistSongs, 0);
+  });
+</script>
+</body>
+</html>

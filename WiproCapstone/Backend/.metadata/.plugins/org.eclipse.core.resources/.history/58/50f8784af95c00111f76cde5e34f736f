@@ -1,0 +1,5 @@
+package com.musiclibrary.admin.repository;
+
+public class AdminRepository {
+
+}

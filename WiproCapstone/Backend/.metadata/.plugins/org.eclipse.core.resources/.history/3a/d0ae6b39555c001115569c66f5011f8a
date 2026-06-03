@@ -1,0 +1,22 @@
+package com.musiclibrary.song.controller;
+
+import org.springframework.http.ResponseEntity;
+
+import com.musiclibrary.song.service.SongService;
+
+@RestController
+@CrossOrigin(origins="*")
+public class SongController {
+	@Autowired
+	private SongService service;
+	
+	// Get all songs (users see only visible)
+	@GetMapping("/api/songs")
+	public ResponseEntity<?>getAllSongs()
+	{
+		return ResponseEntity.ok(service.getAllSongs());
+	}
+	// Get all songs including hidden(admin)
+	@GetMapping("/api/admin/songs")
+	
+}

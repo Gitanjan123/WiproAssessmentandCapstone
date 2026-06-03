@@ -1,0 +1,34 @@
+package com.musiclibrary.notification.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "notifications")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Notification {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String subject;   // email subject
+
+    @Column(columnDefinition = "TEXT")
+    private String message;   // email body
+
+    private String type;      // NEW_SONGS / ANNOUNCEMENT
+
+    private String sentTo;    // who received it
+
+    private LocalDateTime sentAt;  // when it was sent
+
+    @PrePersist
+    public void prePersist() {
+        sentAt = LocalDateTime.now();
+    }
+}

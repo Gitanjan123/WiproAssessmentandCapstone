@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Melodia — Admin Sign In</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/custom.css"/>
+</head>
+<body class="auth-bg min-h-screen flex items-center justify-center">
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="glass-card w-full max-w-md mx-4 p-10 rounded-3xl">
+
+    <div class="text-center mb-10">
+      <div class="logo-icon mx-auto mb-4"
+        style="background:linear-gradient(135deg,#7c3aed,#4f46e5);
+               box-shadow:0 8px 24px rgba(124,58,237,0.35)">
+        ⚙
+      </div>
+      <h1 class="font-display text-4xl tracking-tight" style="color:#a78bfa">Admin Panel</h1>
+      <p class="text-zinc-400 text-sm mt-1 font-body">Melodia Administration</p>
+    </div>
+
+    <div id="adminLoginAlert" class="hidden mb-4 p-3 rounded-xl text-sm text-center"></div>
+
+    <div class="space-y-5">
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+          Admin Email
+        </label>
+        <input id="loginEmail" type="email" placeholder="Enter your email"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+          Password
+        </label>
+        <input id="loginPassword" type="password" placeholder="Enter your password"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+
+      <button onclick="handleAdminLogin()" id="loginBtn"
+        class="btn-primary w-full py-3 rounded-xl font-body font-medium text-sm tracking-wide"
+        style="background:linear-gradient(135deg,#7c3aed,#4f46e5);
+               box-shadow:0 4px 20px rgba(124,58,237,0.3)">
+        Sign In as Admin
+      </button>
+    </div>
+
+    <div class="divider my-6"></div>
+
+    <p class="text-center text-zinc-400 text-sm font-body">
+      Not an admin?
+      <a href="./index.html" style="color:#a78bfa" class="hover:text-zinc-200 ml-1">
+        Go to User Login
+      </a>
+    </p>
+  </div>
+
+  <script src="./js/api.js"></script>
+  <script src="./js/auth.js"></script>
+  <script>
+    // Skip page if already logged in as admin
+    (function() {
+      const token = localStorage.getItem('melodia_token');
+      const user  = JSON.parse(localStorage.getItem('melodia_user') || 'null');
+      if (token && user && user.role === 'ADMIN') {
+        window.location.href = './pages/admin/dashboard.html';
+      }
+    })();
+
+    async function handleAdminLogin() {
+      const email    = document.getElementById('loginEmail')?.value?.trim();
+      const password = document.getElementById('loginPassword')?.value;
+
+      if (!email || !password) {
+        showAlert('adminLoginAlert', 'Please enter your email and password.', 'error'); return;
+      }
+
+      setLoading('loginBtn', true);
+      try {
+        const res  = await AuthAPI.login(email, password);
+        const user = res.user || res;
+
+        if (user.role !== 'ADMIN') {
+          showAlert('adminLoginAlert', 'Access denied. This portal is for admins only.', 'error');
+          clearAuth();
+          setLoading('loginBtn', false, 'Sign In as Admin');
+          return;
+        }
+
+        setToken(res.token);
+        setUser(user);
+        window.location.href = './pages/admin/dashboard.html';
+      } catch (err) {
+        showAlert('adminLoginAlert', err.message || 'Login failed.', 'error');
+        setLoading('loginBtn', false, 'Sign In as Admin');
+      }
+    }
+
+    ['loginEmail', 'loginPassword'].forEach(id => {
+      document.getElementById(id)?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') handleAdminLogin();
+      });
+    });
+  </script>
+</body>
+</html>

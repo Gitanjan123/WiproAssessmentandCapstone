@@ -1,0 +1,5 @@
+package com.musiclibrary.song.dto;
+
+public class SongDTO {
+
+}

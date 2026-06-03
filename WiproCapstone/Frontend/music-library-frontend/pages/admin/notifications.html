@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Melodia Admin — Notifications</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/custom.css"/>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">♪</div>
+      <span>Melodia</span>
+    </div>
+    <div class="nav-section-title">Admin Panel</div>
+    <a href="dashboard.html"     class="nav-link"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="songs.html"         class="nav-link"><span class="nav-icon">🎵</span> Manage Songs</a>
+    <a href="users.html"
+   class="flex items-center gap-3 px-3 py-2.5
+          rounded-xl mb-1 text-sm font-medium
+          text-zinc-400 hover:text-white
+          hover:bg-zinc-800 transition-all">
+  <span class="w-5 text-center">👥</span>
+  Manage Users
+</a>
+    <a href="notifications.html" class="nav-link active"><span class="nav-icon">🔔</span> Notifications</a>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sidebarAvatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">A</div>
+        <div>
+          <div class="user-name" id="sidebarUserName">—</div>
+          <div class="user-role" id="sidebarUserRole">Admin</div>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="nav-link w-full mt-2" style="color:#f87171;border:none;background:none">
+        <span class="nav-icon">↩</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-subtitle">Send announcements to all registered users</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;flex-wrap:wrap">
+
+      <!-- Compose Panel -->
+      <div class="panel">
+        <h2 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:20px">Compose Notification</h2>
+
+        <div id="notifAlert" class="hidden mb-4 p-3 rounded-xl text-sm font-body"></div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Notification Type</label>
+            <select id="notifType" class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body">
+              <option value="NEW_SONGS">New Songs Added</option>
+              <option value="ANNOUNCEMENT">General Announcement</option>
+              <option value="PROMOTION">Promotion</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Subject *</label>
+            <input id="notifSubject" type="text" placeholder="e.g. New Bollywood hits just dropped!"
+              class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+          </div>
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Message *</label>
+            <textarea id="notifMessage" rows="6" placeholder="Write your notification message here…"
+              class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body" style="resize:none"></textarea>
+          </div>
+
+          <!-- Preview -->
+          <div style="background:var(--surface-3);border:1px solid var(--border);border-radius:12px;padding:14px">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);margin-bottom:8px">Email Preview</div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">♪</div>
+              <div>
+                <div style="font-size:13px;font-weight:500" id="previewSubject">Subject will appear here</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px" id="previewMessage">Message preview…</div>
+              </div>
+            </div>
+          </div>
+
+          <button id="sendNotifBtn" class="btn-primary w-full py-3 rounded-xl font-body font-medium text-sm" onclick="handleSendNotification()">
+            Send to All Users
+          </button>
+        </div>
+      </div>
+
+      <!-- History Panel -->
+      <div class="panel">
+        <h2 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px">Notification History</h2>
+        <div id="notificationHistory" style="display:flex;flex-direction:column;gap:8px">
+          <div class="flex justify-center py-8"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../../js/api.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/songs.js"></script>
+<script src="../../js/admin.js"></script>
+<script>
+  requireAuth('ADMIN');
+  populateSidebarUser();
+  loadNotificationHistory();
+
+  // Live preview
+  document.getElementById('notifSubject')?.addEventListener('input', e => {
+    document.getElementById('previewSubject').textContent = e.target.value || 'Subject will appear here';
+  });
+  document.getElementById('notifMessage')?.addEventListener('input', e => {
+    const txt = e.target.value || 'Message preview…';
+    document.getElementById('previewMessage').textContent = txt.substring(0, 80) + (txt.length > 80 ? '…' : '');
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Melodia — My Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/custom.css"/>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">♪</div>
+      <span>Melodia</span>
+    </div>
+    <div class="nav-section-title">Discover</div>
+    <a href="dashboard.html" class="nav-link">
+      <span class="nav-icon">🎵</span> Song Library
+    </a>
+    <div class="nav-section-title">My Music</div>
+    <a href="playlists.html" class="nav-link">
+      <span class="nav-icon">📋</span> My Playlists
+    </a>
+    <a href="favorites.html" class="nav-link">
+      <span class="nav-icon">❤️</span> Favorites
+    </a>
+    <a href="profile.html" class="nav-link active">
+      <span class="nav-icon">👤</span> Profile
+    </a>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sidebarAvatar">U</div>
+        <div>
+          <div class="user-name" id="sidebarUserName">—</div>
+          <div class="user-role" id="sidebarUserRole">User</div>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="nav-link w-full mt-2"
+        style="color:#f87171;border:none;background:none">
+        <span class="nav-icon">↩</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-subtitle">Manage your account details</p>
+    </div>
+
+    <div style="max-width:520px">
+      <div class="panel">
+
+        <!-- Avatar -->
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:28px;
+                    padding-bottom:24px;border-bottom:1px solid var(--border)">
+          <div id="profileAvatar"
+            style="width:72px;height:72px;border-radius:50%;
+                   background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+                   display:flex;align-items:center;justify-content:center;
+                   font-size:28px;font-weight:700;color:#1a0e00;flex-shrink:0">
+            U
+          </div>
+          <div>
+            <div id="profileDisplayName"
+              style="font-family:'Playfair Display',serif;font-size:20px;color:var(--text-primary)">
+              —
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);
+                        text-transform:uppercase;letter-spacing:0.08em;margin-top:3px">
+              Member
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert -->
+        <div id="profileAlert" class="hidden mb-4 p-3 rounded-xl text-sm font-body"></div>
+
+        <!-- Form -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div>
+              <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+                First Name
+              </label>
+              <input id="profileFirstName" type="text" placeholder="John"
+                class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+            </div>
+            <div>
+              <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+                Last Name
+              </label>
+              <input id="profileLastName" type="text" placeholder="Doe"
+                class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+              Email Address
+            </label>
+            <input id="profileEmail" type="email"
+              class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"
+              readonly style="opacity:0.6;cursor:not-allowed"/>
+            <p style="font-size:11px;color:var(--text-muted);margin-top:5px">
+              Email cannot be changed
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+              Phone Number
+            </label>
+            <input id="profilePhone" type="tel" placeholder="+91 98765 43210"
+              class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+          </div>
+
+          <div style="border-top:1px solid var(--border);padding-top:16px">
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;font-weight:500">
+              Change Password
+            </p>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <input id="profileCurrentPassword" type="password" placeholder="Current password"
+                class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+              <input id="profileNewPassword" type="password" placeholder="New password (min. 8 chars)"
+                class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+            </div>
+          </div>
+
+          <button id="updateProfileBtn" onclick="handleUpdateProfile()"
+            class="btn-primary w-full py-3 rounded-xl font-body font-medium text-sm">
+            Save Changes
+          </button>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="panel" style="margin-top:20px;border-color:rgba(239,68,68,0.2)">
+        <h3 style="font-size:14px;font-weight:600;color:#f87171;margin-bottom:12px">Danger Zone</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">
+          Permanently delete your account and all your playlists. This cannot be undone.
+        </p>
+        <button class="btn-danger" onclick="confirmDeleteAccount()">
+          Delete My Account
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../../js/api.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/songs.js"></script>
+<script>
+  requireAuth('USER');
+  populateSidebarUser();
+  prefillProfile();
+
+  function prefillProfile() {
+    const user = getUser();
+    if (!user) return;
+    document.getElementById('profileFirstName').value = user.firstName || '';
+    document.getElementById('profileLastName').value  = user.lastName  || '';
+    document.getElementById('profileEmail').value     = user.email     || '';
+    document.getElementById('profilePhone').value     = user.phone     || '';
+    const initials = ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() || 'U';
+    document.getElementById('profileAvatar').textContent      = initials;
+    document.getElementById('profileDisplayName').textContent =
+      `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
+  }
+
+  async function handleUpdateProfile() {
+    const firstName       = document.getElementById('profileFirstName').value.trim();
+    const lastName        = document.getElementById('profileLastName').value.trim();
+    const phone           = document.getElementById('profilePhone').value.trim();
+    const currentPassword = document.getElementById('profileCurrentPassword').value;
+    const newPassword     = document.getElementById('profileNewPassword').value;
+
+    if (!firstName || !lastName) {
+      showProfileAlert('First and Last name are required.', 'error'); return;
+    }
+    if (newPassword && newPassword.length < 8) {
+      showProfileAlert('New password must be at least 8 characters.', 'error'); return;
+    }
+
+    const payload = { firstName, lastName, phone };
+    if (newPassword) {
+      payload.currentPassword = currentPassword;
+      payload.newPassword = newPassword;
+    }
+
+    const btn = document.getElementById('updateProfileBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:16px;height:16px;border-width:2px;vertical-align:middle"></span>`;
+
+    try {
+      const user = getUser();
+      const updated = await UserAPI.update(user.id, payload);
+      setUser({ ...user, ...updated });
+      prefillProfile();
+      populateSidebarUser();
+      document.getElementById('profileCurrentPassword').value = '';
+      document.getElementById('profileNewPassword').value = '';
+      showProfileAlert('Profile updated successfully!', 'success');
+    } catch (err) {
+      showProfileAlert(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    }
+  }
+
+  function showProfileAlert(msg, type) {
+    const el = document.getElementById('profileAlert');
+    el.textContent = msg;
+    el.className = `mb-4 p-3 rounded-xl text-sm font-body alert-${type}`;
+    el.classList.remove('hidden');
+    if (type === 'success') setTimeout(() => el.classList.add('hidden'), 4000);
+  }
+
+  async function confirmDeleteAccount() {
+    if (!confirm('Are you sure? This cannot be undone.')) return;
+    try {
+      const user = getUser();
+      await UserAPI.delete(user.id);
+      clearAuth();
+      window.location.href = '../../index.html';
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Library — My Playlists</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/custom.css"/>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="../../assets/images/logo.png" class="sidebar-logo-img" alt="logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="logo-icon" style="display:none">♪</div>
+      <span>Music Library</span>
+    </div>
+
+    <div class="nav-section-title">Discover</div>
+    <a href="dashboard.html" class="nav-link">
+      <img src="../../assets/icons/home.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>🏠</span>'"/>
+      Song Library
+    </a>
+
+    <div class="nav-section-title">My Music</div>
+    <a href="playlists.html" class="nav-link active">
+      <img src="../../assets/icons/playlist.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>📋</span>'"/>
+      My Playlists
+    </a>
+    <a href="favorites.html" class="nav-link">
+      <img src="../../assets/icons/favorite.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>❤️</span>'"/>
+      Favorites
+    </a>
+    <a href="profile.html" class="nav-link">
+      <img src="../../assets/icons/profile.png" class="nav-icon-img" alt=""
+           onerror="this.outerHTML='<span class=nav-icon>👤</span>'"/>
+      Profile
+    </a>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sidebarAvatar" style="position:relative;overflow:hidden">
+          <img src="../../assets/images/default-user.png" class="default-user-img" alt=""
+               onerror="this.style.display='none'"/>
+          <span id="sidebarAvatarText"
+            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">U</span>
+        </div>
+        <div>
+          <div class="user-name" id="sidebarUserName">—</div>
+          <div class="user-role" id="sidebarUserRole">User</div>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="nav-link w-full mt-2"
+        style="color:#f87171;border:none;background:none">
+        <span>↩</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div>
+          <h1 class="page-title">My Playlists</h1>
+          <p class="page-subtitle" id="playlistCount">Loading…</p>
+        </div>
+        <button class="btn-primary" style="padding:10px 20px;border-radius:12px;font-size:14px"
+          onclick="openCreatePlaylistModal()">
+          + New Playlist
+        </button>
+      </div>
+    </div>
+
+    <div id="playlistsGrid"
+      style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px"></div>
+  </main>
+</div>
+
+<!-- Create Playlist Modal -->
+<div class="modal-overlay" id="createPlaylistModal" onclick="closeCreatePlaylistModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2 class="modal-title">Create Playlist</h2>
+    <div id="playlistFormAlert" class="hidden mb-4 p-3 rounded-xl text-sm font-body"></div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+          Playlist Name *
+        </label>
+        <input id="createPlaylistName" type="text" placeholder="e.g. Morning Vibes"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+          Description
+        </label>
+        <textarea id="createPlaylistDesc" rows="3" placeholder="Optional description…"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"
+          style="resize:none"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn-secondary" onclick="closeCreatePlaylistModal()">Cancel</button>
+        <button class="btn-primary" style="padding:10px 20px;border-radius:10px;font-size:14px"
+          onclick="handleCreatePlaylist()">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Playlist Modal -->
+<div class="modal-overlay" id="editPlaylistModal" onclick="closeEditPlaylistModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2 class="modal-title">Edit Playlist</h2>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+          Playlist Name
+        </label>
+        <input id="editPlaylistName" type="text"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn-secondary" onclick="closeEditPlaylistModal()">Cancel</button>
+        <button class="btn-primary" style="padding:10px 20px;border-radius:10px;font-size:14px"
+          onclick="handleEditPlaylist()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/api.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/songs.js"></script>
+<script src="../../js/playlist.js"></script>
+<script>
+  requireAuth('USER');
+  populateSidebarUser();
+  loadPlaylists();
+</script>
+</body>
+</html>

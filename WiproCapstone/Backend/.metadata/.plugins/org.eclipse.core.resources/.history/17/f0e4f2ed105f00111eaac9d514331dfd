@@ -1,0 +1,219 @@
+package com.musiclibrary.playlist.service;
+
+import com.musiclibrary.playlist.dto.*;
+import com.musiclibrary.playlist.entity.*;
+import com.musiclibrary.playlist.exception
+        .PlaylistNotFoundException;
+import com.musiclibrary.playlist.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class PlaylistService {
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
+
+    @Autowired
+    private PlaylistSongRepository playlistSongRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    // Get all playlists for a user
+    public List<PlaylistDTO> getUserPlaylists(Long userId) {
+        return playlistRepository.findByUserId(userId)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Get playlist by ID with songs
+    public PlaylistDTO getPlaylistById(Long id) {
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() ->
+                    new PlaylistNotFoundException(
+                        "Playlist not found: " + id));
+
+        PlaylistDTO dto = mapToDTO(playlist);
+
+        List<PlaylistSong> playlistSongs =
+            playlistSongRepository.findByPlaylistId(id);
+
+        // ✅ ADD THIS - print to see if songs are being found
+        System.out.println("Found " + playlistSongs.size() 
+            + " songs in playlist " + id);
+
+        List<SongDTO> songs = playlistSongs.stream()
+                .map(ps -> {
+                    System.out.println("Fetching song: " + ps.getSongId());
+                    SongDTO s = getSongFromSongService(ps.getSongId());
+                    System.out.println("Got song: " + s);
+                    return s;
+                })
+                .filter(s -> s != null)
+                .collect(Collectors.toList());
+
+        System.out.println("Final songs list size: " + songs.size());
+
+        dto.setSongs(songs);
+        dto.setSongCount(songs.size());
+        return dto;
+    }
+    // Create playlist
+    public PlaylistDTO createPlaylist(
+            PlaylistCreateRequest request, Long userId) {
+        Playlist playlist = Playlist.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .userId(userId)
+                .build();
+        return mapToDTO(
+            playlistRepository.save(playlist));
+    }
+
+    // Update playlist
+    public PlaylistDTO updatePlaylist(
+            Long id, PlaylistCreateRequest request,
+            Long userId) {
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() ->
+                    new PlaylistNotFoundException(
+                        "Playlist not found: " + id));
+
+        if (!playlist.getUserId().equals(userId)) {
+            throw new RuntimeException(
+                "Not authorized to update this playlist");
+        }
+
+        playlist.setName(request.getName());
+        if (request.getDescription() != null)
+            playlist.setDescription(
+                request.getDescription());
+
+        return mapToDTO(
+            playlistRepository.save(playlist));
+    }
+
+    // Delete playlist
+    @Transactional
+    public void deletePlaylist(Long id, Long userId) {
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() ->
+                    new PlaylistNotFoundException(
+                        "Playlist not found: " + id));
+
+        if (!playlist.getUserId().equals(userId)) {
+            throw new RuntimeException(
+                "Not authorized to delete this playlist");
+        }
+
+        // Delete all songs in playlist first
+        playlistSongRepository
+            .findByPlaylistId(id)
+            .forEach(ps ->
+                playlistSongRepository.delete(ps));
+
+        playlistRepository.deleteById(id);
+    }
+
+    // Add song to playlist
+    public PlaylistDTO addSongToPlaylist(
+            Long playlistId, Long songId, Long userId) {
+        Playlist playlist =
+            playlistRepository.findById(playlistId)
+                .orElseThrow(() ->
+                    new PlaylistNotFoundException(
+                        "Playlist not found: " + playlistId));
+
+        if (!playlist.getUserId().equals(userId)) {
+            throw new RuntimeException(
+                "Not authorized");
+        }
+
+        // Check if song already in playlist
+        if (playlistSongRepository
+                .existsByPlaylistIdAndSongId(
+                    playlistId, songId)) {
+            throw new RuntimeException(
+                "Song already in playlist");
+        }
+
+        PlaylistSong ps = new PlaylistSong();
+        ps.setPlaylistId(playlistId);
+        ps.setSongId(songId);
+        playlistSongRepository.save(ps);
+
+        return getPlaylistById(playlistId);
+    }
+
+    // Remove song from playlist
+    @Transactional
+    public PlaylistDTO removeSongFromPlaylist(
+            Long playlistId, Long songId, Long userId) {
+        Playlist playlist =
+            playlistRepository.findById(playlistId)
+                .orElseThrow(() ->
+                    new PlaylistNotFoundException(
+                        "Playlist not found: " + playlistId));
+
+        if (!playlist.getUserId().equals(userId)) {
+            throw new RuntimeException(
+                "Not authorized");
+        }
+
+        playlistSongRepository
+            .deleteByPlaylistIdAndSongId(
+                playlistId, songId);
+
+        return getPlaylistById(playlistId);
+    }
+
+    // Search songs in playlist
+    public List<SongDTO> searchSongsInPlaylist(
+            Long playlistId, String query) {
+        List<PlaylistSong> playlistSongs =
+            playlistSongRepository
+                .findByPlaylistId(playlistId);
+
+        return playlistSongs.stream()
+                .map(ps -> getSongFromSongService(
+                    ps.getSongId()))
+                .filter(s -> s != null &&
+                    (s.getTitle().toLowerCase()
+                        .contains(query.toLowerCase()) ||
+                     s.getArtist().toLowerCase()
+                        .contains(query.toLowerCase())))
+                .collect(Collectors.toList());
+    }
+
+    // Call song-service to get song details
+    private SongDTO getSongFromSongService(Long songId) {
+        try {
+            String url = "http://localhost:8083/api/songs/" + songId;
+            return restTemplate.getForObject(url, SongDTO.class);
+        } catch (Exception e) {
+            System.err.println("Failed to fetch song " + songId + ": " + e.getMessage());
+            return null;
+        }
+    }
+
+    private PlaylistDTO mapToDTO(Playlist playlist) {
+        PlaylistDTO dto = new PlaylistDTO();
+        dto.setId(playlist.getId());
+        dto.setName(playlist.getName());
+        dto.setDescription(playlist.getDescription());
+        dto.setUserId(playlist.getUserId());
+
+        // Get song count
+        int count = playlistSongRepository
+            .findByPlaylistId(playlist.getId()).size();
+        dto.setSongCount(count);
+
+        return dto;
+    }
+}

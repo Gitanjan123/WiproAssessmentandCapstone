@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="NewWizardAction">
+		<section name="NewWizard.dialogBounds">
+			<item key="DIALOG_X_ORIGIN" value="0"/>
+			<item key="DIALOG_Y_ORIGIN" value="0"/>
+			<item key="DIALOG_WIDTH" value="525"/>
+			<item key="DIALOG_HEIGHT" value="500"/>
+			<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+		</section>
+	</section>
+	<section name="SmartImportWizard">
+		<item key="SmartImportRootWizardPage.STORE_HIDE_ALREADY_OPEN" value="false"/>
+		<item key="SmartImportRootWizardPage.STORE_CLOSE_IMPORTED" value="false"/>
+		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
+		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
+		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="D:\CapstoneProject\Backend\api-gateway"/>
+			<item value="D:\CapstoneProject\Backend\admin-service"/>
+			<item value="D:\CapstoneProject\Backend\notification-service"/>
+			<item value="D:\CapstoneProject\Backend\playlist-service"/>
+			<item value="D:\CapstoneProject\Backend\song-service"/>
+			<item value="D:\CapstoneProject\Backend\auth-service"/>
+			<item value="D:\CapstoneProject\Backend\user-service"/>
+			<item value="D:\Users\Gitanjan\Downloads\auth-service"/>
+			<item value="D:\CapstoneProject\Backend\eureka-server"/>
+			<item value="D:\CapstoneProject\Backend\config-server"/>
+			<item value="D:\Users\Gitanjan\Downloads\config-server"/>
+			<item value="D:\Users\Gitanjan\Downloads\eureka-server"/>
+		</list>
+		<section name="SmartImportWizard.dialogBounds">
+			<item key="DIALOG_X_ORIGIN" value="-111"/>
+			<item key="DIALOG_Y_ORIGIN" value="7"/>
+			<item key="DIALOG_WIDTH" value="886"/>
+			<item key="DIALOG_HEIGHT" value="626"/>
+			<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+		</section>
+	</section>
+	<section name="CleanDialogSettings">
+		<item key="TOGGLE_SELECTED" value="true"/>
+		<item key="DIALOG_WIDTH" value="498"/>
+		<item key="DIALOG_HEIGHT" value="388"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+</section>

@@ -1,0 +1,5 @@
+package com.musiclibrary.playlist.dto;
+
+public class PlaylistDTO {
+
+}

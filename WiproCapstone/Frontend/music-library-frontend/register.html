@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Melodia — Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom.css"/>
+</head>
+<body class="auth-bg min-h-screen flex items-center justify-center py-10">
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="glass-card w-full max-w-md mx-4 p-10 rounded-3xl">
+    <div class="text-center mb-8">
+      <div class="logo-icon mx-auto mb-4">♪</div>
+      <h1 class="font-display text-3xl text-amber-400 tracking-tight">Join Melodia</h1>
+      <p class="text-zinc-400 text-sm mt-1 font-body">Create your free account</p>
+    </div>
+
+    <div id="registerAlert" class="hidden mb-4 p-3 rounded-xl text-sm text-center"></div>
+
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">First Name</label>
+          <input id="regFirstName" type="text" placeholder="John"
+            class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+        </div>
+        <div>
+          <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Last Name</label>
+          <input id="regLastName" type="text" placeholder="Doe"
+            class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Email Address</label>
+        <input id="regEmail" type="email" placeholder="you@example.com"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Phone Number</label>
+        <input id="regPhone" type="tel" placeholder="+91 98765 43210"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Password</label>
+        <input id="regPassword" type="password" placeholder="Min. 8 characters"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">Confirm Password</label>
+        <input id="regConfirmPassword" type="password" placeholder="Re-enter password"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+
+      <button onclick="handleRegister()" id="registerBtn"
+        class="btn-primary w-full py-3 rounded-xl font-body font-medium text-sm tracking-wide mt-2">
+        Create Account
+      </button>
+    </div>
+
+    <div class="divider my-6"></div>
+
+    <p class="text-center text-zinc-400 text-sm font-body">
+      Already have an account?
+      <a href="index.html" class="text-amber-400 hover:text-amber-300 transition-colors ml-1">Sign In</a>
+    </p>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

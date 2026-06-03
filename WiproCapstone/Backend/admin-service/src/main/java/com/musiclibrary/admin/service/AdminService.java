@@ -1,0 +1,93 @@
+package com.musiclibrary.admin.service;
+
+import com.musiclibrary.admin.dto.*;
+import com.musiclibrary.admin.entity.Admin;
+import com.musiclibrary.admin.exception
+        .AdminNotFoundException;
+import com.musiclibrary.admin.repository.AdminRepository;
+import org.springframework.beans.factory.annotation
+        .Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class AdminService {
+
+    @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    // Get all admins
+    public List<AdminDTO> getAllAdmins() {
+        return adminRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Get admin by ID
+    public AdminDTO getAdminById(Long id) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() ->
+                    new AdminNotFoundException(
+                        "Admin not found: " + id));
+        return mapToDTO(admin);
+    }
+    
+    // create admin
+    public AdminDTO createAdmin(CreateAdminRequest request) {
+        if (adminRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+        Admin admin = Admin.builder()
+            .firstName(request.getFirstName())
+            .lastName(request.getLastName())
+            .email(request.getEmail())
+            .phone(request.getPhone())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role("ADMIN")
+            .build();
+        return mapToDTO(adminRepository.save(admin));
+    }
+
+    // Update admin
+    public AdminDTO updateAdmin(
+            Long id, UpdateAdminRequest request) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() ->
+                    new AdminNotFoundException(
+                        "Admin not found: " + id));
+
+        if (request.getFirstName() != null)
+            admin.setFirstName(request.getFirstName());
+        if (request.getLastName() != null)
+            admin.setLastName(request.getLastName());
+        if (request.getPhone() != null)
+            admin.setPhone(request.getPhone());
+
+        return mapToDTO(adminRepository.save(admin));
+    }
+
+    // Delete admin
+    public void deleteAdmin(Long id) {
+        if (!adminRepository.existsById(id)) {
+            throw new AdminNotFoundException(
+                "Admin not found: " + id);
+        }
+        adminRepository.deleteById(id);
+    }
+
+    private AdminDTO mapToDTO(Admin admin) {
+        AdminDTO dto = new AdminDTO();
+        dto.setId(admin.getId());
+        dto.setFirstName(admin.getFirstName());
+        dto.setLastName(admin.getLastName());
+        dto.setEmail(admin.getEmail());
+        dto.setPhone(admin.getPhone());
+        dto.setRole(admin.getRole());
+        return dto;
+    }
+}

@@ -1,0 +1,5 @@
+package com.musiclibrary.song.service;
+
+public class SongService {
+
+}

@@ -1,0 +1,5 @@
+package com.musiclibrary.song.security;
+
+public class SecurityConfig {
+
+}

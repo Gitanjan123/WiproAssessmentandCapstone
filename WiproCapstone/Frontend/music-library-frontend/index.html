@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Melodia — Sign In</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom.css"/>
+</head>
+<body class="auth-bg min-h-screen flex items-center justify-center">
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="glass-card w-full max-w-md mx-4 p-10 rounded-3xl">
+
+    <div class="text-center mb-10">
+      <div class="logo-icon mx-auto mb-4">♪</div>
+      <h1 class="font-display text-4xl text-amber-400 tracking-tight">Melodia</h1>
+      <p class="text-zinc-400 text-sm mt-1 font-body">Your personal music universe</p>
+    </div>
+
+    <div id="loginAlert" class="hidden mb-4 p-3 rounded-xl text-sm text-center"></div>
+
+    <div class="space-y-5">
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+          Email Address
+        </label>
+        <input id="loginEmail" type="email" placeholder="you@example.com"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+      <div>
+        <label class="block text-xs text-zinc-400 mb-2 uppercase tracking-widest font-body">
+          Password
+        </label>
+        <input id="loginPassword" type="password" placeholder="••••••••"
+          class="input-field w-full px-4 py-3 rounded-xl text-white text-sm font-body"/>
+      </div>
+
+      <button onclick="handleLogin()" id="loginBtn"
+        class="btn-primary w-full py-3 rounded-xl font-body font-medium text-sm tracking-wide mt-2">
+        Sign In as User
+      </button>
+
+      <!-- Admin Login Button -->
+      <a href="admin-login.html"
+        class="block w-full py-3 rounded-xl text-center text-sm font-medium font-body
+               border border-violet-500/40 text-violet-400
+               hover:bg-violet-500/10 transition-all">
+        ⚙ Sign In as Admin
+      </a>
+    </div>
+
+    <div class="divider my-6"></div>
+
+    <p class="text-center text-zinc-400 text-sm font-body">
+      Don't have an account?
+      <a href="register.html"
+         class="text-amber-400 hover:text-amber-300 transition-colors ml-1">
+        Create one
+      </a>
+    </p>
+
+    <p class="text-center text-zinc-400 text-sm font-body mt-2">
+      Forgot your password?
+      <a href="forgot-password.html"
+         class="text-amber-400 hover:text-amber-300 transition-colors ml-1">
+        Reset it
+      </a>
+    </p>
+
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

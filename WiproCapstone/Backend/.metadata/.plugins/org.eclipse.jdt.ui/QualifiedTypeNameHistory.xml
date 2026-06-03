@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="io.jsonwebtoken.SignatureAlgorithm"/>
+    <fullyQualifiedTypeName name="org.springframework.security.core.userdetails.User"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.auth.dto.LoginRequest"/>
+    <fullyQualifiedTypeName name="jakarta.persistence.EnumType"/>
+    <fullyQualifiedTypeName name="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.song.repository.SongRepository"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.song.entity.Song"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.song.dto.SongCreateRequest"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.song.dto.SongDTO"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.song.service.SongService"/>
+    <fullyQualifiedTypeName name="java.lang.RuntimeException"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.playlist.repository.PlaylistRepository"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.playlist.repository.PlaylistSongRepository"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.playlist.dto.PlaylistDTO"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.playlist.entity.Playlist"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.playlist.dto.PlaylistCreateRequest"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.playlist.entity.PlaylistSong"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="java.time.LocalDateTime"/>
+    <fullyQualifiedTypeName name="org.springframework.mail.SimpleMailMessage"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.notification.entity.Notification"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.notification.service.NotificationService"/>
+    <fullyQualifiedTypeName name="org.springframework.http.HttpStatus"/>
+    <fullyQualifiedTypeName name="io.jsonwebtoken.security.Keys"/>
+    <fullyQualifiedTypeName name="io.jsonwebtoken.Jwts"/>
+    <fullyQualifiedTypeName name="jakarta.servlet.http.HttpServletRequest"/>
+    <fullyQualifiedTypeName name="org.springframework.security.core.context.SecurityContextHolder"/>
+    <fullyQualifiedTypeName name="jakarta.servlet.FilterChain"/>
+    <fullyQualifiedTypeName name="org.springframework.security.config.annotation.web.builders.HttpSecurity"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.admin.repository.AdminRepository"/>
+    <fullyQualifiedTypeName name="java.util.stream.Collectors"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.admin.dto.UpdateAdminRequest"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.admin.entity.Admin"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.admin.dto.AdminDTO"/>
+    <fullyQualifiedTypeName name="com.musiclibrary.admin.service.AdminService"/>
+    <fullyQualifiedTypeName name="org.springframework.http.ResponseEntity"/>
+</qualifiedTypeNameHistroy>
