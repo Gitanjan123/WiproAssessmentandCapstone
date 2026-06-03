@@ -22,14 +22,6 @@ public class AdminController {
         return ResponseEntity.ok(
             adminService.getAllAdmins());
     }
-    
-    // create admin
-    @PostMapping
-    public ResponseEntity<?> createAdmin(
-            @RequestBody CreateAdminRequest request) {
-        return ResponseEntity.ok(
-            adminService.createAdmin(request));
-    }
 
     // Get admin by ID
     @GetMapping("/{id}")
